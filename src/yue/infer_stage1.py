@@ -24,6 +24,7 @@ from transformers.cache_utils import StaticCache
 @dataclass
 class SampleSettings:
     # Here is suggested decoding config
+    top_k = 0
     top_p = 0.93
     temperature = 1
     repetition_penalty = 1.1
@@ -272,6 +273,7 @@ class Stage1Pipeline_HF(Stage1Pipeline):
                 min_new_tokens=100,
                 do_sample=True,
                 top_p=sample_settings.top_p,
+                top_k=sample_settings.top_k,
                 temperature=sample_settings.temperature,
                 repetition_penalty=sample_settings.repetition_penalty,
                 eos_token_id=self.mmtokenizer.eoa,
@@ -352,7 +354,7 @@ class Stage1Pipeline_EXL2(Stage1Pipeline):
 
         # Sample settings
         gen_settings = ExLlamaV2Sampler.Settings(
-            top_k=0, top_p=sample_settings.top_p, token_repetition_penalty=sample_settings.repetition_penalty, temperature=sample_settings.temperature
+            top_k=sample_settings.top_k, top_p=sample_settings.top_p, token_repetition_penalty=sample_settings.repetition_penalty, temperature=sample_settings.temperature
         )
         gen_settings.allow_tokens(self.tokenizer, [32002] + list(range(45334, 56722)))
 
